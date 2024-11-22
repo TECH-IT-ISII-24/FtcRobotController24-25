@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
@@ -73,6 +74,9 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
 
+    private DcMotor lowArmDrive = null;
+    private DcMotor highArmDrive = null;
+
     @Override
     public void runOpMode() {
 
@@ -82,6 +86,9 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+
+        lowArmDrive = hardwareMap.get(DcMotor.class, "low_arm_drive");
+        highArmDrive = hardwareMap.get(DcMotor.class, "high_arm_drive");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -97,6 +104,10 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        lowArmDrive.setDirection(DcMotor.Direction.FORWARD);
+        highArmDrive.setDirection(DcMotor.Direction.FORWARD);
+
+
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -113,6 +124,23 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             double axial   = gamepad1.left_stick_x;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_y;
             double yaw     =  gamepad1.right_stick_x;
+
+            boolean lowArmPower = gamepad2.circle;
+            boolean highArmPower = gamepad2.square;
+
+            if(lowArmPower){
+
+                lowArmDrive.setPower(1.0);
+                highArmDrive.setPower(1.0);
+            }
+            else if(highArmPower){
+
+                lowArmDrive.setPower(-1.0);
+                highArmDrive.setPower(-1.0);
+            } else{
+                lowArmDrive.setPower(0.0);
+                highArmDrive.setPower(0.0);
+            }
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
