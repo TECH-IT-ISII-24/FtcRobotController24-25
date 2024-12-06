@@ -77,7 +77,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
 
-    private DcMotor armDrive = null;
+    private DcMotor extensionArmDrive = null;
+    private DcMotor angularArmDrive = null;
 
     @Override
     public void runOpMode() {
@@ -89,7 +90,11 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
-        armDrive = hardwareMap.get(DcMotor.class, "arm_drive");
+        extensionArmDrive = hardwareMap.get(DcMotor.class, "extension_arm_drive");
+        angularArmDrive = hardwareMap.get(DcMotor.class, "angular_arm_drive");
+
+        DigitalChannel digitalInput = hardwareMap.get(DigitalChannel.class, "digitalInput1");
+        digitalInput.setMode(DigitalChannel.Mode.INPUT);
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -106,9 +111,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        armDrive.setDirection(DcMotor.Direction.REVERSE);
-
-
+        extensionArmDrive.setDirection(DcMotor.Direction.REVERSE);
+        angularArmDrive.setDirection(DcMotor.Direction.REVERSE);
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -121,6 +125,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         while (opModeIsActive()) {
             double max;
 
+            boolean state = digitalInput.getState();
+
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial   = gamepad1.left_stick_x;  // Note: pushing stick forward gives negative value
             double lateral =  -gamepad1.left_stick_y;
@@ -129,13 +135,12 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             boolean upArmPower = gamepad2.triangle;
             boolean downArmPower = gamepad2.cross;
 
-
             if(upArmPower){
-                armDrive.setPower(-0.85);
+                extensionArmDrive.setPower(-0.85);
             } else if(downArmPower){
-                armDrive.setPower(0.85);
+                extensionArmDrive.setPower(0.85);
             } else {
-                armDrive.setPower(0.0);
+                extensionArmDrive.setPower(0.0);
             }
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
@@ -185,6 +190,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("Digital Input State", state);
             telemetry.update();
         }
     }}
