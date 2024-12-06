@@ -34,7 +34,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import java.security.DigestInputStream;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -120,16 +123,17 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial   = gamepad1.left_stick_x;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_y;
+            double lateral =  -gamepad1.left_stick_y;
             double yaw     =  gamepad1.right_stick_x;
 
             boolean upArmPower = gamepad2.triangle;
             boolean downArmPower = gamepad2.cross;
 
+
             if(upArmPower){
-                armDrive.setPower(-0.7);
+                armDrive.setPower(-0.85);
             } else if(downArmPower){
-                armDrive.setPower(0.7);
+                armDrive.setPower(0.85);
             } else {
                 armDrive.setPower(0.0);
             }
